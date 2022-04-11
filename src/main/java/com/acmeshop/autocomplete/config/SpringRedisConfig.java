@@ -1,13 +1,16 @@
 package com.acmeshop.autocomplete.config;
 
+import java.time.Duration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-
-import com.acmeshop.autocomplete.loader.ProductJsonLoader;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
 
 @Configuration
 public class SpringRedisConfig {
@@ -24,12 +27,16 @@ public class SpringRedisConfig {
 
 	@Bean
 	public JedisConnectionFactory connectionFactory() {
-		JedisConnectionFactory connectionFactory = new JedisConnectionFactory();
-		connectionFactory.setHostName(redisHost);
-		connectionFactory.setPort(redisPort);
-		log.info(redisPassword);
-		connectionFactory.setPassword(redisPassword);
-		return connectionFactory;
+		RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName(redisHost);
+        redisStandaloneConfiguration.setPort(redisPort);
+        redisStandaloneConfiguration.setDatabase(0);
+        redisStandaloneConfiguration.setPassword(RedisPassword.of(redisPassword));
+
+        JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
+        jedisClientConfiguration.connectTimeout(Duration.ofSeconds(60));// 60s connection timeout
+
+		return new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
 	}
 
 	// @Bean

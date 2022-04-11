@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.acmeshop.autocomplete.datastore.AbstractAutocomplete.Response;
-import com.acmeshop.autocomplete.datastore.AbstractAutocomplete.Stats;
-
 public class LocalStoreImpl extends AbstractAutocomplete {
 	
 	// This structure 
